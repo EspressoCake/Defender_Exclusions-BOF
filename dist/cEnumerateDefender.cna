@@ -1,0 +1,70 @@
+beacon_command_register(
+	"cEnumDefenderException", 
+	"Enumerate Defender exceptions.", 
+	"cEnumDefenderException [1-3]");
+
+alias cEnumDefenderException {
+	local('$handle $args $data');
+
+	if ( size(@_) != 2 )
+	{
+		berror($1, beacon_command_detail("cEnumDefenderException"));
+		return;
+	}
+
+	if ( (int($2) >= 1) && (int($2) <= 3) )
+	{
+		# Pack args pre-emptively
+		$args = bof_pack($1, "i", $2);
+
+		if ( barch($1) eq "x86" )
+		{
+			$handle = openf(script_resource("cEnumerateDefender.x86.o"));
+			$data   = readb($handle, -1);
+			closef($handle);
+
+			if (!-isadmin $1)
+			{
+				berror($1, "This beacon is not in an elevated context.");
+
+				return;
+			}
+
+			beacon_inline_execute($1, $data, "go", $args);
+		}
+		else if ( barch($1) eq "x64" )
+		{
+			$handle = openf(script_resource("cEnumerateDefender.x64.o"));
+			$data   = readb($handle, -1);
+			closef($handle);
+
+			if (!-isadmin $1)
+			{
+				berror($1, "This beacon is not in an elevated context.");
+
+				return;
+			}
+
+			beacon_inline_execute($1, $data, "go", $args);
+		}
+		else
+		{
+			berror($1, "The architecture of the process supplied does not match expectations");
+			
+			return;
+		}
+	}
+	else
+	{
+		local('$errorString');
+		$errorString =  "";
+		$errorString .= "You must supply an argument between 1 and 3.\n";
+		$errorString .= "1: Folder exclusions\n";
+		$errorString .= "2: Process exclusions\n";
+		$errorString .= "3: Extension exclusions."
+		
+		berror($1, $errorString);
+
+		return;
+	}
+}
