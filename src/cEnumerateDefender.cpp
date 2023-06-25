@@ -11,7 +11,6 @@
 #define EXTENSION_EXCLUSIONS    L"ExclusionExtension"
 
 
-static const wchar_t* options[] = { FOLDER_EXCLUSIONS, PROCESS_EXCLUSIONS, EXTENSION_EXCLUSIONS };
 static unsigned short int step  = 1;
 
 extern "C" void dumpFormatAllocation(formatp* formatAllocationData)
@@ -32,6 +31,7 @@ extern "C" void go(char* argc, int len)
     formatp fpObject;
     formatp fpExclusionObject;
     datap   dpParser;
+    const wchar_t* options[] = { FOLDER_EXCLUSIONS, PROCESS_EXCLUSIONS, EXTENSION_EXCLUSIONS };
 
     BeaconFormatAlloc(&fpObject, 64 * 1024);
     BeaconFormatAlloc(&fpExclusionObject, 64 * 1024);
